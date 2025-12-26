@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Mariam ❤️</title>
+    <style>
+        :root {
+            --box-red: #ff4757;
+            --lid-red: #ff6b81;
+            --ribbon-gold: #ffbc00;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #1e2124;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        /* The Box */
+        .gift-container {
+            position: relative;
+            width: 140px;
+            height: 120px;
+            margin-bottom: 40px;
+            z-index: 5;
+        }
+
+        .lid {
+            position: absolute;
+            width: 154px;
+            height: 35px;
+            background: var(--lid-red);
+            top: -35px;
+            left: -7px;
+            z-index: 10;
+            border-radius: 4px;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .box-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--box-red);
+            z-index: 8;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .ribbon {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100%;
+            background: var(--ribbon-gold);
+        }
+
+        /* Burst Animation */
+        .heart-particle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 9;
+            opacity: 0;
+        }
+
+        @keyframes explode {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(1.5); opacity: 0; }
+        }
+
+        #openBtn {
+            -webkit-appearance: none;
+            padding: 18px 35px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            background: #2ed573;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 6px 0 #21a455;
+            transition: opacity 0.3s;
+        }
+
+        /* Message Box */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .letter-card {
+            background: white;
+            width: 100%;
+            max-width: 350px;
+            max-height: 75vh;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .scroll-content {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+        }
+
+        .paragraph {
+            color: #2d3436;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #okBtn {
+            -webkit-appearance: none;
+            background: var(--box-red);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .is-open .lid { transform: translateY(-200px) rotate(45deg); opacity: 0; }
+        @keyframes shake { 0% { transform: rotate(0); } 50% { transform: rotate(3deg); } 100% { transform: rotate(-3deg); } }
+        .shaking { animation: shake 0.1s infinite; }
+    </style>
+</head>
+<body>
+
+    <div class="gift-container" id="gift">
+        <div class="lid"><div class="ribbon"></div></div>
+        <div class="box-body"><div class="ribbon"></div></div>
+        <div id="particles"></div>
+    </div>
+
+    <button id="openBtn">Open for Mariam 🎁</button>
+
+    <div class="modal-overlay" id="modal">
+        <div class="letter-card">
+            <div style="text-align:center; font-size:2.5rem; margin-bottom:10px;">💝</div>
+            <div class="scroll-content">
+                <div class="paragraph">
+Hi Mariam,
+
+(Delete this and paste your very long paragraph here. You can make it as long as you want, and it will scroll!)
+
+I love you!
+                </div>
+            </div>
+            <button id="okBtn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const openBtn = document.getElementById('openBtn');
+        const gift = document.getElementById('gift');
+        const modal = document.getElementById('modal');
+        const particlesContainer = document.getElementById('particles');
+
+        function createHearts() {
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-particle';
+                heart.innerHTML = i % 2 === 0 ? '❤️' : '💖';
+                const tx = (Math.random() - 0.5) * 400 + 'px';
+                const ty = (Math.random() - 0.5) * 400 - 100 + 'px';
+                const tr = Math.random() * 360 + 'deg';
+                heart.style.setProperty('--tx', tx);
+                heart.style.setProperty('--ty', ty);
+                heart.style.setProperty('--tr', tr);
+                heart.style.animation = `explode 1s ease-out forwards`;
+                particlesContainer.appendChild(heart);
+            }
+        }
+
+        function handleOpen() {
+            gift.classList.add('shaking');
+            setTimeout(() => {
+                gift.classList.remove('shaking');
+                gift.classList.add('is-open');
+                createHearts();
+                openBtn.style.opacity = '0';
+                setTimeout(() => {
+                    openBtn.style.display = 'none';
+                    modal.style.display = 'flex';
+                }, 800);
+            }, 400);
+        }
+
+        openBtn.addEventListener('click', handleOpen);
+        document.getElementById('okBtn').addEventListener('click', () => {
+            modal.style.display = 'none';
+            location.reload();
+        });
+    </script>
+</body>
+</html>
